@@ -8,6 +8,7 @@ const PORT = 3000;
 // HubSpot API URL
 const HUBSPOT_URL = "https://api.hubapi.com/crm/v3/objects/contacts";
 const HUBSPOT_DEAL_URL = "https://api.hubapi.com/crm/v3/objects/deals";
+const HUBSPOT_COMPANY_URL = "https://api.hubapi.com/crm/v3/objects/companies";
 
 app.get('/get-contacts', async (req, res) => {
     try {
@@ -53,7 +54,27 @@ app.get('/get-deals', async (req, res) => {
         });
     }
 });
+app.get('/get-companies', async (req, res) => {
+    try {
+        const response = await axios.get(HUBSPOT_COMPANY_URL, {
+            headers: {
+                Authorization: `Bearer ${process.env.HUBSPOT_API_KEY}`
+            }
+        });
 
+        res.json({
+            success: true,
+            total: response.data.total,
+            results: response.data.results
+        });
+
+    } catch (error) {
+        res.json({
+            success: false,
+            error: error.response?.data || error.message
+        });
+    }
+});
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
